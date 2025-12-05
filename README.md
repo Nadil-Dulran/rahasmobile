@@ -1,50 +1,114 @@
-# Welcome to your Expo app 👋
+# RahasChat Mobile (Local Dev)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is the mobile (Expo/React Native) version of RahasChat. Currently it supports local development only. The full mobile release is planned for future development and deployment.
 
-## Get started
+- Web repo: https://github.com/Nadil-Dulran/rahas
+- Live web app: https://rahas.onrender.com
 
-1. Install dependencies
+## Prerequisites
 
-   ```bash
-   npm install
-   ```
+- macOS with `zsh` (default shell in this project)
+- Node.js and npm installed
+- Expo CLI (installed via npm)
+- A running local backend server from this repo's `server/`
 
-2. Start the app
+### Install npm (Node.js)
 
-   ```bash
-   npx expo start
-   ```
+We recommend using `nvm` to install/manage Node.js and npm.
 
-In the output, you'll find options to open the app in a
+```zsh
+# Install nvm (restart terminal after this if needed)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | zsh
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+# Load nvm (if not already loaded)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+# Install an LTS version of Node (includes npm)
+nvm install --lts
+nvm use --lts
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+# Verify
+node -v
+npm -v
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Install Expo CLI
 
-## Learn more
+```zsh
+npm install -g expo-cli
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Repository Layout
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+This repo is structured as a simple monorepo:
 
-## Join the community
+- `client/` – Expo React Native app
+- `server/` – Node.js/Express backend (Socket.io + MongoDB/Mongoose)
+- root `package.json` – convenience scripts to run client and server
 
-Join our community of developers creating universal apps.
+## Setup
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Install dependencies for both client and server:
+
+```zsh
+# From repo root
+npm run dev:server --silent; true  # creates no deps; just to show script exists
+
+# Install server deps
+cd server
+npm install
+
+# Install client deps
+cd ../client
+npm install
+```
+
+Ensure the backend has a valid `.env` in `server/` and MongoDB is reachable. See `server/.env.example` for required variables. Make sure `FRONTEND_ORIGIN` matches your Expo dev URL (e.g., `http://localhost:19000`).
+
+## Running
+
+In two terminals:
+
+```zsh
+# Terminal 1: start backend from repo root
+npm run dev:server
+
+# Terminal 2: start mobile app from repo root
+npm run dev:client
+```
+
+The client script changes into `client/` and runs Expo. Choose the platform:
+
+- Press `i` to launch iOS simulator (if installed)
+- Press `a` to launch Android emulator (if installed)
+- Scan the QR code with Expo Go on your device
+
+## Connect Mobile App to Server (Expo)
+
+To connect the Expo app to your local server:
+
+- Set `API_BASE` in `client/src/config.js` to your server URL. For local macOS, this is typically:
+  - iOS simulator: `http://localhost:<PORT>`
+  - Android emulator: `http://10.0.2.2:<PORT>`
+  - Physical device: use your machine’s LAN IP, e.g., `http://192.168.1.10:<PORT>`
+- Ensure your server CORS `FRONTEND_ORIGIN` includes the Expo dev URL.
+- Start the server first, then start the client.
+
+Presence (Socket.io) and messaging rely on the server being reachable from the device/emulator.
+
+## Current Status
+
+- This is the RahasChat mobile version, focused on local development.
+- Planned: full-featured mobile app and production deployment.
+- For a working, deployed experience today, use the web app.
+
+## Troubleshooting
+
+- MongoDB connection errors: verify `MONGODB_URI` in `server/.env` and that MongoDB is running/accessible.
+- 404/Network errors in chat sending: confirm `API_BASE` and the device/emulator can reach your server.
+- CORS issues: check `FRONTEND_ORIGIN` in the backend to match Expo dev origin.
+
+## License
+
+This project is currently private and intended for personal/local development.
