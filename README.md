@@ -1,4 +1,4 @@
-# 🕵️‍♂️ RahasChat Mobile (Local Dev)
+# 🕵️‍♂️ RahasChat Mobile
 
 This is the mobile (Expo/React Native) version of RahasChat. Currently it supports local development only. The full mobile release is planned for future development and deployment.
 
